@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const juegoSchema = mongoose.Schema({
         nombre: {
             type: String, 
@@ -18,4 +18,5 @@ const juegoSchema = mongoose.Schema({
 )
 const Juego = mongoose.model('Juego', juegoSchema)
 
-module.exports = Juego
+module.exports = Juego;
+exports.Juego = Juego;

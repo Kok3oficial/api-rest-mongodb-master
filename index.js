@@ -4,7 +4,9 @@ const cors = require('cors');
 
 const connectDB = require('./config/db');
 
-const Videojuego = require('./models/Juego');
+const Juegos = require('./')
+
+const Juego = require('./models/Juego');
 
 const userRouter = require('./routes/userRoutes');
 const gameRouter = require('./routes/gameRoutes');
@@ -13,11 +15,7 @@ require('dotenv').config();
 
 connectDB();
 
-const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://localhost:3002'
-];
+
 
 // const corsOptions = {
 //     origin: function (origin, callback) {
@@ -36,11 +34,23 @@ app.use(express.json())
 app.use('/api/user', userRouter) // http://localhost:3000/api/user
 app.use('/api/product', gameRouter); //http://localhost:3000/api/product
 
+app.get("/obtener-juegos", async(req, res) => {
+    const { nombre, precio, imagen } = req.body
+    try {
+        const obtenerJuegos = await Juegos.get({ nombre, precio, imagen })
+        res.json(obtenerJuegos)
+    } catch (error) {
+        res.status(500).json({
+            msg: "Hubo un error obteniendo los videojuegos",
+            error: error.message
+        })
+    }
+})
 
 app.post("/crear-juego", async(req, res) => {
-    const { nombre, precio } = req.body
+    const { nombre, precio, imagen } = req.body
     try {
-        const nuevojuego = await Juego.create({ nombre, precio })
+        const nuevoJuego = await Juego.create({ nombre, precio, imagen })
         res.json(nuevoJuego)
     } catch (error) {
         res.status(500).json({
@@ -67,8 +77,8 @@ app.put("/actualizar-juego", async (req, res) => {
 app.delete("/borrar-juego", async (req, res) => {
     const { id } = req.body
     try {
-        const juegoBorrado = await Videojuego.findByIdAndDelete({_id: id })
-        res.json(uegoBorrado)
+        const juegoBorrado = await Juego.findByIdAndDelete({_id: id })
+        res.json(juegoBorrado)
     } catch (error) {
         res.status(500).json({
             msg: "Hubo un error eliminando el videojuego",
