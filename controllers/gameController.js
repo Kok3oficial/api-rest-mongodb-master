@@ -1,14 +1,14 @@
-const Juego = require('../models/Juego').default;
+const Game = require('../models/gameModel');
 
 
-exports.createGame = async(req, res) => {
-    const { nombre, precio, imagen } = req.body
+exports.createGame = async (req, res) => {
+    const { nombre, precio, descripcion, imagen } = req.body
     try {
-        const nuevoJuego = await Juego.create({ nombre, precio, imagen });
-        res.status(201).json(nuevoJuego);
+        const newGame = await Game.create({ nombre, precio, descripcion, imagen });
+        res.status(201).json(newGame);
     } catch (error) {
         res.status(500).json({
-            msg: "Hubo un error creando el videojuego",
+            msg: "Hubo un error creando el producto",
             error: error.message
         });
     }
@@ -17,57 +17,74 @@ exports.createGame = async(req, res) => {
 
 exports.getGames = async (req, res) => {
     try {
-        const juegos = await Juego.find({});
-        res.json({juegos}) 
+        const games = await Game.find({});
+        res.json({ games });
     } catch (error) {
         res.status(500).json({
-            msg: "Hubo un error al intentar obtener los videojuegos",
+            msg: "Hubo un error al intentar obtener los productos",
             error: error.message
         });
+
     }
-}
+};
 
 exports.getGameById = async (req, res) => {
     try {
-        const juego = await Juego.findById(req.params.id);
+        const game = await Game.findById(req.params.id);
 
-        if (!juego) {
+        if (!game) {
             return res.status(404).json({
-                error: 'Juego no encontrado'
+                error: 'Producto no encontrado'
             });
         }
-        res.status(200).json(juego); 
+        res.status(200).json(game);
     } catch (error) {
         res.status(500).json({
-            msg: "Hubo un error al intentar obtener el juego",
+            msg: "Hubo un error al intentar obtener el producto",
             error: error.message
         });
-        
+
     }
 };
 
 exports.updateGameById = async (req, res) => {
-    const { nombre, precio } = req.body;
     try {
-        const actualizacionJuego = await Juego.findByIdAndUpdate(req.params.id, { nombre, precio }, { new: true });  // Cambié a `req.params.id`
-        res.json(actualizacionJuego);
+        const game = await Game.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+        if (game) {
+            res.status(200).json(game);
+        } else {
+            res.status(404).json({
+                error: 'Producto no se encuentra',
+                error: error.message
+            });
+        }
     } catch (error) {
         res.status(500).json({
-            msg: "Hubo un error actualizando el videojuego",
-            error
+            error: 'Error al actualizar el producto',
+            error: error.message
         });
     }
 };
 
 exports.deleteGameById = async (req, res) => {
-
     try {
-        const juegoBorrado = await Juego.findByIdAndDelete(req.params.id);  // Cambié a `req.params.id`
-        res.json(juegoBorrado);
+        const game = await Game.findByIdAndDelete(req.params.id);
+
+        if (game) {
+            res.status(200).json({
+                message: 'Producto Borrado'
+            });
+        } else {
+            res.status(404).json({
+                error: 'Producto no encontrado'
+            });
+        }
     } catch (error) {
         res.status(500).json({
-            msg: "Hubo un error eliminando el videojuego",
-            error
+            error: 'Error al borrar el producto'
         });
     }
 };

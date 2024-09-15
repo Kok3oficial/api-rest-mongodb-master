@@ -1,13 +1,17 @@
 const express = require('express');
-const { getGames, createGame, updateGameById, deleteGameById, getGameById } = require('../controllers/gameController');
+const { getGames, createGame, getGameById, updateGameById, deleteGameById } = require('../controllers/gameController');
 
 const gameRouter = express.Router();
 
-gameRouter.get('/obtener-juegos', getGames);  
-gameRouter.post('/crear-juego', createGame);
-gameRouter.put('/actualizar-juego/:id', updateGameById);  
-gameRouter.delete('/borrar-juego/:id', deleteGameById);  
-gameRouter.get('/obtener-juego/:id', getGameById);
+gameRouter.get('/readall', getGames);
+
+gameRouter.post('/create', createGame);
+
+gameRouter.get('/readone/:id', getGameById);
+
+gameRouter.put('/update/:id', updateGameById);
+
+gameRouter.delete('/delete/:id', deleteGameById)
 
 
 module.exports = gameRouter;
